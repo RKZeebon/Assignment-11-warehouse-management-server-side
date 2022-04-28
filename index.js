@@ -33,8 +33,22 @@ async function run() {
         })
 
 
-        // Get data from DB(get method);
+        // Get all data from DB(get method);
+        // http://localhost:5000/products
+        app.get("/products", async (req, res) => {
+            const cursor = productsCollection.find();
+            const result = await cursor.toArray()
+            res.send(result)
+        })
 
+        // Get single data from DB(get method);
+        // http://localhost:5000/product/${id}
+        app.get("/product/:id", async (req, res) => {
+            const id = req.params.id
+            const q = { _id: ObjectId(id) }
+            const result = await productsCollection.findOne(q);
+            res.send(result)
+        })
 
 
 
