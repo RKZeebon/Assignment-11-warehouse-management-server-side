@@ -25,7 +25,7 @@ async function run() {
 
 
         // Add data to DB(post method);
-        // http://localhost:5000/product
+        // https://guarded-gorge-33419.herokuapp.com/product
         app.post('/product', async (req, res) => {
             const data = req.body;
             const result = await productsCollection.insertOne(data);
@@ -34,14 +34,14 @@ async function run() {
 
 
         // Get all data from DB(get method);
-        // http://localhost:5000/products
+        // https://guarded-gorge-33419.herokuapp.com/products
         app.get("/products", async (req, res) => {
             const result = await productsCollection.find().toArray()
             res.send(result)
         })
 
         // Get single data from DB(get method);
-        // http://localhost:5000/product/${id}
+        // https://guarded-gorge-33419.herokuapp.com/product/${id}
         app.get("/product/:id", async (req, res) => {
             const id = req.params.id
             const filter = { _id: ObjectId(id) }
@@ -52,7 +52,7 @@ async function run() {
 
 
         // update data of DB(put method);
-        // http://localhost:5000/product/${id}
+        // https://guarded-gorge-33419.herokuapp.com/product/${id}
         app.put("/product/:id", async (req, res) => {
             const id = req.params.id
             const filter = { _id: ObjectId(id) }
@@ -67,7 +67,7 @@ async function run() {
 
 
         // delete data from DB(delete method);
-        // http://localhost:5000/product/${id}
+        // https://guarded-gorge-33419.herokuapp.com/product/${id}
         app.delete("/product/:id", async (req, res) => {
             const id = req.params.id
             const filter = { _id: ObjectId(id) }
