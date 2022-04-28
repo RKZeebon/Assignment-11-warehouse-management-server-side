@@ -25,7 +25,12 @@ async function run() {
 
 
         // Add data to DB(post method);
-
+        // http://localhost:5000/product
+        app.post('/product', async (req, res) => {
+            const data = req.body;
+            const result = await productsCollection.insertOne(data);
+            res.send(result)
+        })
 
 
         // Get data from DB(get method);
