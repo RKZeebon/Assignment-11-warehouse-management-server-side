@@ -53,7 +53,16 @@ async function run() {
 
 
         // update data of DB(put method);
-
+        // http://localhost:5000/product/${id}
+        app.put("/product/:id", async (req, res) => {
+            const id = req.params.id
+            const q = { _id: ObjectId(id) }
+            const data = req.body;
+            const updateData = { $set: data };
+            const option = { upsert: true }
+            const result = await productsCollection.updateOne(q, updateData, option);
+            res.send(result)
+        })
 
 
 
