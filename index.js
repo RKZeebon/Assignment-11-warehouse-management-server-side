@@ -36,8 +36,7 @@ async function run() {
         // Get all data from DB(get method);
         // http://localhost:5000/products
         app.get("/products", async (req, res) => {
-            const cursor = productsCollection.find();
-            const result = await cursor.toArray()
+            const result = await productsCollection.find().toArray()
             res.send(result)
         })
 
@@ -45,8 +44,8 @@ async function run() {
         // http://localhost:5000/product/${id}
         app.get("/product/:id", async (req, res) => {
             const id = req.params.id
-            const q = { _id: ObjectId(id) }
-            const result = await productsCollection.findOne(q);
+            const filter = { _id: ObjectId(id) }
+            const result = await productsCollection.findOne(filter);
             res.send(result)
         })
 
@@ -56,11 +55,11 @@ async function run() {
         // http://localhost:5000/product/${id}
         app.put("/product/:id", async (req, res) => {
             const id = req.params.id
-            const q = { _id: ObjectId(id) }
+            const filter = { _id: ObjectId(id) }
             const data = req.body;
             const updateData = { $set: data };
             const option = { upsert: true }
-            const result = await productsCollection.updateOne(q, updateData, option);
+            const result = await productsCollection.updateOne(filter, updateData, option);
             res.send(result)
         })
 
@@ -68,7 +67,13 @@ async function run() {
 
 
         // delete data from DB(delete method);
-
+        // http://localhost:5000/product/${id}
+        app.delete("/product/:id", async (req, res) => {
+            const id = req.params.id
+            const filter = { _id: ObjectId(id) }
+            const result = await productsCollection.deleteOne(filter);
+            res.send(result)
+        })
 
 
 
