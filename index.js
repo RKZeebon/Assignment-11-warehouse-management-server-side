@@ -40,14 +40,25 @@ async function run() {
             res.send(result)
         })
 
-        // Get single data from DB(get method);
+        // Get single data from DB by id(get method);
         // https://guarded-gorge-33419.herokuapp.com/product/${id}
         app.get("/product/:id", async (req, res) => {
             const id = req.params.id
-            const filter = { _id: ObjectId(id) }
-            const result = await productsCollection.findOne(filter);
+            const query = { _id: ObjectId(id) }
+            const result = await productsCollection.findOne(query);
             res.send(result)
         })
+
+
+        // Get single data from DB by email(get method);
+        // https://guarded-gorge-33419.herokuapp.com/product
+        app.get("/product", async (req, res) => {
+            const email = req.body.email
+            const query = { email }
+            const result = await productsCollection.findOne(query);
+            res.send(result)
+        })
+
 
 
 
@@ -55,11 +66,11 @@ async function run() {
         // https://guarded-gorge-33419.herokuapp.com/product/${id}
         app.put("/product/:id", async (req, res) => {
             const id = req.params.id
-            const filter = { _id: ObjectId(id) }
+            const query = { _id: ObjectId(id) }
             const data = req.body;
             const updateData = { $set: data };
             const option = { upsert: true }
-            const result = await productsCollection.updateOne(filter, updateData, option);
+            const result = await productsCollection.updateOne(query, updateData, option);
             res.send(result)
         })
 
@@ -70,8 +81,8 @@ async function run() {
         // https://guarded-gorge-33419.herokuapp.com/product/${id}
         app.delete("/product/:id", async (req, res) => {
             const id = req.params.id
-            const filter = { _id: ObjectId(id) }
-            const result = await productsCollection.deleteOne(filter);
+            const query = { _id: ObjectId(id) }
+            const result = await productsCollection.deleteOne(query);
             res.send(result)
         })
 
