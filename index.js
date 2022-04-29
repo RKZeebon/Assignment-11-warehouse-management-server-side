@@ -40,6 +40,16 @@ async function run() {
             res.send(result)
         })
 
+
+        // Get limited data from DB(get method);
+        // https://guarded-gorge-33419.herokuapp.com/sixproducts
+        app.get("/sixproducts", async (req, res) => {
+            const result = await productsCollection.find().limit(6).toArray()
+            res.send(result)
+        })
+
+
+
         // Get single data from DB by id(get method);
         // https://guarded-gorge-33419.herokuapp.com/product/${id}
         app.get("/product/:id", async (req, res) => {
