@@ -60,12 +60,12 @@ async function run() {
         })
 
 
-        // Get single data from DB by email(get method);
-        // https://guarded-gorge-33419.herokuapp.com/product
-        app.get("/product", async (req, res) => {
-            const email = req.body.email
-            const query = { email }
-            const result = await productsCollection.findOne(query);
+        // Get data from DB by email(get method);
+        // https://guarded-gorge-33419.herokuapp.com/userProducts
+        app.get("/userProducts", async (req, res) => {
+            const email = req.query.email;
+            const q = { email: email }
+            const result = await productsCollection.find(q).toArray();
             res.send(result)
         })
 
