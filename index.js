@@ -21,7 +21,6 @@ const verifyToken = (req, res, next) => {
             return res.status(403).send('Forbidden access')
         }
         req.decoded = decoded
-        console.log(decoded.email);
     })
     next()
 }
@@ -35,8 +34,6 @@ async function run() {
     try {
         await client.connect();
         const productsCollection = client.db("computerCity").collection("products");
-        console.log("connected to db");
-
 
 
         // Add data to DB(post method);
@@ -57,14 +54,10 @@ async function run() {
 
 
         // Get limited data from DB(get method);
-
         app.get("/sixproducts", async (req, res) => {
             const result = await productsCollection.find().limit(6).toArray()
             res.send(result)
         })
-
-
-
         // Get single data from DB by id(get method);
 
         app.get("/product/:id", async (req, res) => {
@@ -74,12 +67,10 @@ async function run() {
             res.send(result)
         })
 
-
         // Get data from DB by email(get method);
 
         app.get("/userProducts", verifyToken, async (req, res) => {
             const email = req.query.email;
-            console.log(req.decoded.email);
             const decodedEmail = req.decoded.email;
             if (email === decodedEmail) {
                 const q = { email: email }
@@ -141,6 +132,3 @@ app.get("/", (req, res) => {
     res.send('server is runing')
 })
 
-app.listen(port, () => {
-    console.log("listening to", port);
-})
