@@ -21,6 +21,7 @@ const verifyToken = (req, res, next) => {
             return res.status(403).send('Forbidden access')
         }
         req.decoded = decoded
+
     })
     next()
 }
@@ -132,3 +133,6 @@ app.get("/", (req, res) => {
     res.send('server is runing')
 })
 
+app.listen(port, () => {
+    console.log("listening to", port);
+})
