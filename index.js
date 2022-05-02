@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
+const jwt = require('jsonwebtoken');
 const app = express()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
@@ -10,6 +11,20 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cors());
 
+const verifyToken = (req, res, next) => {
+    const authorization = req.headers.authorization
+    if (!authorization) {
+        return res.status(401).send('Unauthorized access')
+    }
+    jwt.verify(authorization, process.env.ACCESS_TOKEN, (err, decoded) => {
+        if (err) {
+            return res.status(403).send('Forbidden access')
+        }
+        req.decoded = decoded
+        console.log(decoded.email);
+    })
+    next()
+}
 
 
 
@@ -25,7 +40,7 @@ async function run() {
 
 
         // Add data to DB(post method);
-        // https://guarded-gorge-33419.herokuapp.com/product
+
         app.post('/product', async (req, res) => {
             const data = req.body;
             const result = await productsCollection.insertOne(data);
@@ -34,7 +49,7 @@ async function run() {
 
 
         // Get all data from DB(get method);
-        // https://guarded-gorge-33419.herokuapp.com/products
+
         app.get("/products", async (req, res) => {
             const result = await productsCollection.find().toArray()
             res.send(result)
@@ -42,7 +57,7 @@ async function run() {
 
 
         // Get limited data from DB(get method);
-        // https://guarded-gorge-33419.herokuapp.com/sixproducts
+
         app.get("/sixproducts", async (req, res) => {
             const result = await productsCollection.find().limit(6).toArray()
             res.send(result)
@@ -51,7 +66,7 @@ async function run() {
 
 
         // Get single data from DB by id(get method);
-        // https://guarded-gorge-33419.herokuapp.com/product/${id}
+
         app.get("/product/:id", async (req, res) => {
             const id = req.params.id
             const query = { _id: ObjectId(id) }
@@ -61,19 +76,26 @@ async function run() {
 
 
         // Get data from DB by email(get method);
-        // https://guarded-gorge-33419.herokuapp.com/userProducts
-        app.get("/userProducts", async (req, res) => {
+
+        app.get("/userProducts", verifyToken, async (req, res) => {
             const email = req.query.email;
-            const q = { email: email }
-            const result = await productsCollection.find(q).toArray();
-            res.send(result)
+            console.log(req.decoded.email);
+            const decodedEmail = req.decoded.email;
+            if (email === decodedEmail) {
+                const q = { email: email }
+                const result = await productsCollection.find(q).toArray();
+                res.send(result)
+            }
+            else {
+                res.status(403).send('Forbidden access')
+            }
         })
 
 
 
 
         // update data of DB(put method);
-        // https://guarded-gorge-33419.herokuapp.com/product/${id}
+
         app.put("/product/:id", async (req, res) => {
             const id = req.params.id
             const query = { _id: ObjectId(id) }
@@ -88,7 +110,7 @@ async function run() {
 
 
         // delete data from DB(delete method);
-        // https://guarded-gorge-33419.herokuapp.com/product/${id}
+
         app.delete("/product/:id", async (req, res) => {
             const id = req.params.id
             const query = { _id: ObjectId(id) }
@@ -97,6 +119,13 @@ async function run() {
         })
 
 
+        app.post('/login', async (req, res) => {
+            const email = req.body
+            const token = jwt.sign(email, process.env.ACCESS_TOKEN);
+
+            res.send({ token })
+        })
+
 
     }
     finally {
@@ -104,16 +133,6 @@ async function run() {
     }
 }
 run().catch(console.dir);
-
-
-// client.connect(err => {
-//     const collection = client.db("test").collection("devices");
-//     console.log("server connected");
-//     // perform actions on the collection object
-//     //   client.close();
-// });
-
-
 
 
 
